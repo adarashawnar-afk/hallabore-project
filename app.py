@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+import os
 
 st.set_page_config(page_title="Hallabore Project", layout="centered")
 st.title("💐 Hallabore Bouquet")
@@ -14,24 +15,36 @@ if search:
 
 st.markdown("---")
 
+# Foto lokal yang sudah tersimpan di laptopmu
+foto_lokal = {
+    "LilyHallabore": "lily.jpg",
+    "TulippiesHallabore": "tulip.jpg",
+    "MixesHallabore": "mix.jpg"
+}
+
 for idx, row in df.iterrows():
     col1, col2 = st.columns([1, 2])
+    nama_bunga = row['Nama'].strip()
     
     with col1:
-        # Kita pakai link gambar internet publik dulu biar websitemu LANGSUNG JALAN TANPA EROR!
-        if 'Gambar' in df.columns and pd.notna(row['Gambar']) and str(row['Gambar']).startswith('http'):
-            st.image(str(row['Gambar']).strip(), use_container_width=True)
+        if nama_bunga in foto_lokal and os.path.exists(foto_lokal[nama_bunga]):
+            st.image(foto_lokal[nama_bunga], use_container_width=True)
         else:
-            # Cadangan kalau link gambar di Google Sheets belum beres
-            st.warning("Gambar sedang dimuat")
+            st.warning("Gambar tidak tersedia")
             
     with col2:
         st.subheader(row['Nama'])
         st.write(row['Deskripsi'])
+        
+        # Menampilkan Harga
         if 'Harga' in df.columns:
             st.write(f"💰 **Harga:** {row['Harga']}")
+            
+        # Menampilkan Kategori
         if 'Kategori' in df.columns:
             st.write(f"🏷️ **Kategori:** {row['Kategori']}")
+            
+        # Menampilkan Stok
         if 'Stok' in df.columns:
             st.write(f"📦 **Stok:** {row['Stok']}")
         
